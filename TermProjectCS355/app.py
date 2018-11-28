@@ -21,10 +21,10 @@ def search_engine():
     Ensures things are already in the cache before user starts to query
     :return:
     """
-    popultate_redis()
+    #popultate_redis()
     return render_template('index.html')
 
-@app.route('/result', methods=['POST'])
+@app.route('/result', methods = ['GET', 'POST'])
 def handle_data():
     """
     This takes in the query and gives response based on if something similar is in the DB
@@ -46,11 +46,12 @@ def popultate_redis():
     #populate here with any necessary info
 
     #pages = [pages]
-    redis.set('default', json.dumps(default))
+    #redis.set('default', json.dumps(default))
 
     #print(redis.get('default'))
     #reply = json.loads(redis.execute_command('JSON.GET', 'object'))
+    pass
 
 
 if __name__ == '__main__':
-   app.run(debug=True)
+   app.run()

@@ -1,0 +1,28 @@
+body{
+    text-align: center;
+    font-family: Courier, sans-serif;
+}
+input[type=text]{
+    width: 500px;
+    margin: auto;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    height:40px;
+    alignment: center;
+    outline: none;
+    padding:20px;
+}
+
+button[type=submit]{
+    width: 100px;
+    background-color: dodgerblue;
+    border-radius: 20px;
+    outline: none;
+}
+
+::-webkit-input-placeholder { /* Chrome */
+    opacity: 100%;
+    color: lightgray;
+    font-family: Courier, sans-serif;
+    font-size: small;
+}
