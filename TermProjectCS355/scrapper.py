@@ -1,14 +1,15 @@
 import re
-from collections import Counter
 from bs4 import BeautifulSoup
-import requests
+import requests, logging
+
+logger = logging
 
 def scrape(url):
 
     """
 
     :param url: takes a url as a string
-    :return: a map of its page content as a Counter Object and list of related links
+    :return:
     """
 
     page_response = requests.get(url, timeout=5)
@@ -22,12 +23,13 @@ def scrape(url):
 
     wordList = []
     for i in textContent:
-        wordList = wordList + re.sub("[^\w]", " ", i).split()
+        wordList = wordList + re.sub("[^\w]", " ", i).split() #cleans out symbols
 
     links = []
     for link in page_content.find_all('a'):
         links.append(link.get('href'))
 
+    #Would have used dict(Counter(wordList)) but keys had symbols which weren't allowed in mongodb
     WORDS = {}
     for j in wordList:
         if j not in WORDS:
@@ -35,4 +37,6 @@ def scrape(url):
         else:
             WORDS[j] += 1
 
-    return { "content": WORDS, "links": links }
+    final_content = " ".join(wordList[:30]) + "..."
+
+    return { "word_counts": WORDS, "related_links": links, "details": final_content, "url": url}
