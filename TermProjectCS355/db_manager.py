@@ -174,7 +174,7 @@ class DBManager():
         """
 
         :aim: Use mongo aggregation to get desired pages. Search is done by title and word occurrence
-        :note: Run time may be O(n^4) but each level of iteration is small
+        :note: Run time is O(n^4) but each level of iteration is small. Much better would have been done if not for deadline
         :param query:  string of words
         :return:
         """
