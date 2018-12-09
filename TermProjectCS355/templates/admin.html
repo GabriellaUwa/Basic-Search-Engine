@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../static/style.css">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="/static/render.js?r={{reload}}"></script>
+
+    <title>Administrator</title>
+</head>
+<body>
+    <a href="{{ url_for('search_engine') }}">Back to Gaggle</a>
+    <h1>My admin page</h1><br>
+    <div class="container" style="position:center; top:110px; width: 350px">
+
+        <div>
+            <form action="{{ url_for('get_data') }}" style="margin: 0 auto; left:-20px;">
+                <div>
+                    <button type="submit" class="btn btn-info">
+                       MyDB
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div>
+            <form action="{{ url_for('search_history') }}"  >
+                <div>
+                    <button type="submit" class="btn btn-info">
+                       History
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div>
+            <form action="{{ url_for('reset_db') }}" >
+                <div>
+                    <button type="submit" class="btn btn-info">
+                       Reset
+                    </button><br>
+                </div>
+            </form>
+        </div>
+    </div><br><br><br>
+
+    <div id="DBValues"></div>
+
+<div>
+<form action="{{ url_for('add_url') }}" method="post">
+
+    <div>
+        <div class="form-group" >
+            <input type="text" name="projectFilepath" placeholder="  add page url..." id="search" size="300">
+        </div>
+
+        <div>
+            <button type="submit" class="btn btn-info">
+                Add url
+            </button>
+        </div>
+    </div>
+</form>
+</div>
+    <br>
+    <p align="center">{{ mssg }}</p>
+    <br><br>
+
+</body>
+</html>

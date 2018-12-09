@@ -1,13 +1,12 @@
 import re
 from bs4 import BeautifulSoup
-import requests, logging
+import requests
 
-logger = logging
 
 def scrape(url):
 
     """
-
+    :aim: scrape a web page
     :param url: takes a url as a string
     :return:
     """
@@ -30,13 +29,22 @@ def scrape(url):
         links.append(link.get('href'))
 
     #Would have used dict(Counter(wordList)) but keys had symbols which weren't allowed in mongodb
+    #Plus times constraint to finish project preventing a better approach
     WORDS = {}
     for j in wordList:
         if j not in WORDS:
-            WORDS[j] = 1
+            WORDS[j.lower()] = 1
         else:
-            WORDS[j] += 1
+            WORDS[j.lower()] += 1
 
-    final_content = " ".join(wordList[:30]) + "..."
+    final_content = " ".join(wordList[:50]) + "..."
 
-    return { "word_counts": WORDS, "related_links": links, "details": final_content, "url": url}
+    return {
+
+             "word_counts": WORDS,
+             "related_links": links,
+             "details": final_content,
+             "url": url,
+             "title": page_content.title.string
+    }
+

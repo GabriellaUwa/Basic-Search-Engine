@@ -20,9 +20,42 @@ button[type=submit]{
     outline: none;
 }
 
-::-webkit-input-placeholder { /* Chrome */
+::-webkit-input-placeholder {
     opacity: 100%;
     color: lightgray;
     font-family: Courier, sans-serif;
     font-size: small;
+}
+
+::-moz-placeholder { /* Firefox 19+ */
+    opacity: 100%;
+    color: lightgray;
+    font-family: Courier, sans-serif;
+    font-size: small;
+}
+
+h1{
+
+    position: center;
+    text-align: center;
+    color: dodgerblue;
+
+}
+
+a:visited {
+  color: darkmagenta;
+}
+
+a{
+    margin:auto;
+    text-align:center;
+    display:block;
+    color: blue;
+}
+
+.container {
+  display: flex;
+}
+.container > div {
+  flex: 1; /*grow*/
 }
