@@ -36,12 +36,15 @@
 
 <div id="result" style="width: 70%;">
     <ul>
-        <p align="left">{{ timer }}</p>
+        <p align="left">{{ timer }}</p><br>
     {% if result is not string %}
         {% for key, val in result.items() %}
-            <p align="left" style="font-size: large;" ><a href={{ key }}>{{ val[0] }}</a></p>
-            <p align="left" style="color: cornflowerblue;">{{ key }}</p>
+            <div align="left" style="font-size: large; margin: 0 auto; float: left;" ><a href={{ key }}>{{ val[0] }}</a></div>
+
+            <hr style="clear:both;">
+           <div> <p align="left" style="color: cornflowerblue;">{{ key }}</p>
             <p align="left">{{ val[1] }}</p>
+           </div>
         {% endfor %}
     {% else %}
         {{ result }}

@@ -30,7 +30,14 @@ class DBManager():
     URLS = [
         "https://en.wikipedia.org/wiki/Main_Page",
         "https://en.wikipedia.org/wiki/Beyonc%C3%A9",
-        "https://www.qc.cuny.edu/about/Pages/default.aspx"
+        "https://www.qc.cuny.edu/about/Pages/default.aspx",
+        "https://en.wikipedia.org/wiki/Kelly_Rowland",
+        "https://en.wikipedia.org/wiki/Food",
+        "https://en.wikipedia.org/wiki/New_York_City",
+        "https://www.merriam-webster.com/dictionary/dictionary",
+        "https://en.wikipedia.org/wiki/Encyclopedia",
+        "https://en.wikipedia.org/wiki/Word",
+        "https://en.wikipedia.org/wiki/Linguistics"
     ]
 
     related_links = []
@@ -208,7 +215,7 @@ class DBManager():
                     if page in p:
                         for content in p_content:
                             for pt in p_title:
-                                if page in content and p.get(page) not in results.values():
+                                if page in content and p.get(page) not in results.values() and pt.get(page) is not None:
                                     results[p.get(page)] = [pt.get(page),content.get(page)]
                                 elif page in content and p.get(page) in results.values():
                                     results[p.get(page)+str(self.adder)] = [pt.get(page).strip(),content.get(page)]
@@ -237,11 +244,12 @@ class DBManager():
         self.page_title.delete_many({})
         self.clear_cached()
 
-        # if reset db, run below script
+        self.populate()
+
 
     def populate(self):
         """
         :aim: puts page info into database
         :return:
         """
-        self.setup_collections()
+        self.setup_collections(self.URLS)

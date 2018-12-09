@@ -3,6 +3,10 @@ from flask import render_template
 from flask import request
 from db_manager import DBManager
 from json2html import *
+from pymongo import errors
+import logging
+
+_log = logging
 
 app = Flask(__name__)
 
@@ -23,36 +27,38 @@ def handle_data():
     :aim: Shows search result page. Checks redis first before mongodb if there's more
     :return: search result page
     """
-    import time
-    start = time.time()
-    projectpath = request.form['projectFilepath']
+    try:
 
-    final_result = {}
-    results = db_handler.redis_get_all(projectpath)
-    if results:
-        for j in results:
-            final_result[j] = results.get(j)
+        import time
+        start = time.time()
+        projectpath = request.form['projectFilepath']
 
-        results = db_handler.query_mongo(projectpath)
-        for j in results:
-            if results.get(j) not in final_result.values():
+        final_result = {}
+        results = db_handler.redis_get_all(projectpath)
+        if results:
+            for j in results:
                 final_result[j] = results.get(j)
-    else:
-        final_result = db_handler.query_mongo(projectpath)
 
-    if final_result == {}:
-        results = "Sorry we could not find what you're searching for"
-    else:
-        db_handler.redis_set(projectpath, final_result)
+            results = db_handler.query_mongo(projectpath)
+            for j in results:
+                if results.get(j) not in final_result.values():
+                    final_result[j] = results.get(j)
+        else:
+            final_result = db_handler.query_mongo(projectpath)
 
-    end = time.time()
+        end = time.time()
+        if final_result is None:
+            final_result = "Sorry we could not find what you're searching for"
+            string = "We have 0 result(s) (" + str(round(end - start, 4) % 60) + " seconds)"
+        else:
+            db_handler.redis_set(projectpath, final_result)
+            string = "We have " + str(len(final_result)) + " result(s) (" + str(round(end - start, 4) % 60) + " seconds)"
 
-    if isinstance(results, str):
-        string = "We have 0 result(s) (" + str(round(end - start, 4) % 60) + " seconds)"
-    else:
-        string = "We have " +  str(len(final_result)) + " result(s) (" + str(round(end - start, 4) % 60) + " seconds)"
+        return render_template("result.html", result=final_result, timer=string)
+    except errors.CursorNotFound as e:
+        _log.debug(e)
+        return "Admin, please reset the database before searching"
 
-    return render_template("result.html", result=final_result, timer=string)
 
 @app.route("/admin_result")
 def get_data():
