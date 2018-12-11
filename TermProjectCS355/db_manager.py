@@ -1,9 +1,10 @@
 from redis import Redis
 from flask_pymongo import MongoClient
 from scrapper import scrape
-import json, time, logging, re, os
+import json, time, logging, re
 import urllib.parse as urlparse
-import configparser
+from urllib import error
+import random
 
 log = logging.debug
 
@@ -31,13 +32,22 @@ class DBManager():
         "https://en.wikipedia.org/wiki/Main_Page",
         "https://en.wikipedia.org/wiki/Beyonc%C3%A9",
         "https://www.qc.cuny.edu/about/Pages/default.aspx",
-        "https://en.wikipedia.org/wiki/Kelly_Rowland",
         "https://en.wikipedia.org/wiki/Food",
         "https://en.wikipedia.org/wiki/New_York_City",
         "https://www.merriam-webster.com/dictionary/dictionary",
         "https://en.wikipedia.org/wiki/Encyclopedia",
         "https://en.wikipedia.org/wiki/Word",
-        "https://en.wikipedia.org/wiki/Linguistics"
+        "https://en.wikipedia.org/wiki/Linguistics",
+        "https://en.wikipedia.org/wiki/City",
+        "https://en.wikipedia.org/wiki/Global_city",
+        "https://en.wikipedia.org/wiki/Computer_science",
+        "https://en.wikipedia.org/wiki/Horoscope",
+        "https://en.wikipedia.org/wiki/Career",
+        "https://en.wikipedia.org/wiki/Tourism",
+        "https://en.wikipedia.org/wiki/Queens_College,_City_University_of_New_York",
+        "https://en.wikipedia.org/wiki/Art",
+        "https://en.wikipedia.org/wiki/Music",
+        "https://en.wikipedia.org/wiki/Culture",
     ]
 
     related_links = []
@@ -49,7 +59,6 @@ class DBManager():
         :aim: populates Mongodb with searchable information
         :return: None
         """
-        global related_links
         pages = []  # for page_collection
         page_word = []  # for page_word_collection
         page_content = []  # for page_content_collection
@@ -59,29 +68,39 @@ class DBManager():
         page_index = 1
         if len(urls) == 1:
             page_index= self.page_word_collection.find({}).count() + 1
+
         for i in urls:
-            temp = scrape(i)
+            try:
+                temp = scrape(i)
 
-            pages.append({str(page_index): i})  # maps index: urls
+                pages.append({str(page_index): i})  # maps index: urls
 
-            word_counts = temp.get("word_counts")
+                word_counts = temp.get("word_counts")
 
 
-            page_word.append({str(page_index): word_counts})  # maps page_index: {word: count}
-            page_content.append({str(page_index): temp.get("details")})  # maps {page_index: content}
+                page_word.append({str(page_index): word_counts})  # maps page_index: {word: count}
+                page_content.append({str(page_index): temp.get("details")})  # maps {page_index: content}
 
-            title.append({temp.get("title"): [i, temp.get("details")]})
+                try:
+                    stripped_title = re.sub(r'[^\w\s]','', temp.get("title"))
+                except:
+                    stripped_title = ""
 
-            page_title.append({str(page_index): temp.get("title")})
-            page_index += 1
+                title.append({stripped_title: [i, temp.get("details")]})
 
+                page_title.append({str(page_index): temp.get("title")})
+                page_index += 1
+
+                self.related_links = self.related_links + temp.get("related_links")
+            except ValueError as e:
+                log(e)
 
         self.page_collection.insert_many(pages)
         self.page_word_collection.insert_many(page_word)
         self.page_content_collection.insert_many(page_content)
         self.by_title.insert_many(title)
         self.page_title.insert_many(page_title)
-        #related_links = related_links + temp.get("related_links")
+
 
     def more_link_index(self):
         """
@@ -89,9 +108,14 @@ class DBManager():
         :aim: The more people search the more things will get indexed. Hence this function call
         :return: None
         """
-        #self.setup_collections(related_links)
-        pass
-
+        try:
+            for i in random.sample(self.related_links, 50):
+                try:
+                    self.setup_collections([i])
+                except error.URLError:
+                    log("Invalid URL")
+        except ValueError as e:
+            log(e)
 
     def redis_set(self,query, page_info):
         """
@@ -102,6 +126,7 @@ class DBManager():
         :return: None
         """
         self.redis.set(query, json.dumps(page_info), ex= int(time.time()) + 86400, nx=True)
+        self.more_link_index()
 
 
     def redis_get_all(self, query):
@@ -253,3 +278,4 @@ class DBManager():
         :return:
         """
         self.setup_collections(self.URLS)
+

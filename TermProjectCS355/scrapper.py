@@ -1,7 +1,9 @@
 import re
 from bs4 import BeautifulSoup
 import requests
+import logging
 
+_log = logging.debug
 
 def scrape(url):
 
@@ -25,7 +27,7 @@ def scrape(url):
         wordList = wordList + re.sub("[^\w]", " ", i).split() #cleans out symbols
 
     links = []
-    for link in page_content.find_all('a'):
+    for link in page_content.find_all('a', attrs={'href': re.compile("^https://")}):
         links.append(link.get('href'))
 
     #Would have used dict(Counter(wordList)) but keys had symbols which weren't allowed in mongodb
@@ -37,14 +39,19 @@ def scrape(url):
         else:
             WORDS[j.lower()] += 1
 
-    final_content = " ".join(wordList[:50]) + "..."
+    try:
+        t = page_content.title.string
+    except AttributeError as e:
+        t = ""
+        _log(e)
 
+    final_content = " ".join(wordList[:50]) + "..."
     return {
 
              "word_counts": WORDS,
              "related_links": links,
              "details": final_content,
              "url": url,
-             "title": page_content.title.string
+             "title": t
     }
 

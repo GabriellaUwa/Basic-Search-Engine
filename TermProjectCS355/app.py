@@ -89,7 +89,7 @@ def add_url():
         db_handler.add_url(url)
         mssg = "Page info has sucessfully been stored"
         return render_template("admin.html" , mssg=mssg)
-    except:
+    except errors.InvalidURI:
         mssg = "There was an error in adding your page, try again later!"
         return render_template("admin.html" , mssg=mssg)
 
@@ -116,3 +116,4 @@ def reset_db():
 
 if __name__ == '__main__':
    app.run()
+
