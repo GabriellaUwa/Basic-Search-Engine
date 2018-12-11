@@ -4,3 +4,7 @@
 - Used Redis to cache queries and Heroku to host 
 - Web crawling as more searches occur
 - Admin functionality to reset databes and choose webpages to be indexded
+
+<img src="Basic-Search-Engine/Screen Shot 2018-12-10 at 10.22.51 PM.png"/>
+<img src="Basic-Search-Engine/Screen Shot 2018-12-10 at 10.23.10 PM.png"/>
+<img src="Basic-Search-Engine/Screen Shot 2018-12-10 at 10.28.15 PM.png"/>
