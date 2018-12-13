@@ -5,6 +5,7 @@ import json, time, logging, re
 import urllib.parse as urlparse
 from urllib import error
 import random
+from collections import OrderedDict
 
 log = logging.debug
 
@@ -14,7 +15,7 @@ class DBManager():
     #clean up later
     url = urlparse.urlparse("redis://h:pf1961dc8a32a43730a9db4190e6c504bb5a96b0b273a3a3d34c19dd3426d0804@ec2-34-225-229-4.compute-1.amazonaws.com:59769")
     redis = Redis(host=url.hostname, port=url.port, password=url.password)
-    mongo_client = MongoClient("mongodb://heroku_b629lqd4:eaula0va2orvkjrko8pmsptkg4@ds227853.mlab.com:27853/heroku_b629lqd4")
+    mongo_client = MongoClient("mongodb://heroku_b629lqd4:eaula0va2orvkjrko8pmsptkg4@ds227853.mlab.com:27853/heroku_b629lqd4", document_class=OrderedDict)
 
     #MongoDB Sandbox
     db = mongo_client["heroku_b629lqd4"]
@@ -29,7 +30,6 @@ class DBManager():
 
 
     URLS = [
-        "https://en.wikipedia.org/wiki/Main_Page",
         "https://en.wikipedia.org/wiki/Beyonc%C3%A9",
         "https://www.qc.cuny.edu/about/Pages/default.aspx",
         "https://en.wikipedia.org/wiki/Food",
@@ -41,7 +41,6 @@ class DBManager():
         "https://en.wikipedia.org/wiki/City",
         "https://en.wikipedia.org/wiki/Global_city",
         "https://en.wikipedia.org/wiki/Computer_science",
-        "https://en.wikipedia.org/wiki/Horoscope",
         "https://en.wikipedia.org/wiki/Career",
         "https://en.wikipedia.org/wiki/Tourism",
         "https://en.wikipedia.org/wiki/Queens_College,_City_University_of_New_York",
@@ -109,7 +108,7 @@ class DBManager():
         :return: None
         """
         try:
-            for i in random.sample(self.related_links, 50):
+            for i in self.related_links:
                 try:
                     self.setup_collections([i])
                 except error.URLError:
@@ -186,12 +185,11 @@ class DBManager():
         page_title = self.page_title.find({}, {'_id': False})
 
         return {
-                "page_indexes": [p for p in pages],
-                "page-word"   : [pw for pw in page_word],
-                "page-content": [pc for pc in page_content],
-                "title"       : [t for t in title],
-                "page-title"  : [pt for pt in page_title]
-
+                "page_indexes": [dict(p) for p in pages],
+                "page-word"   : [dict(pw) for pw in page_word],
+                "page-content": [dict(pc) for pc in page_content],
+                "title"       : [dict(t) for t in title],
+                "page-title"  : [dict(pt) for pt in page_title],
         }
 
 
@@ -225,7 +223,7 @@ class DBManager():
             for j in pw:
                 for k,v in j.items():
                     for word in wordList:
-                        if word in v.keys() and v.get(word) > 10 and k not in result_pages:
+                        if word in v.keys() and k not in result_pages:
                            result_pages.append(k)
 
             pages = self.page_collection.find({}, {'_id': False})

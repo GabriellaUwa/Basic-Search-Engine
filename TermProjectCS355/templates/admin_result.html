@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <div>
+    {% for j in result %}
+        <div align="left" style="font-size: large; margin: 0 auto; float: left;" ><p>{{ j.upper() }}</p></div>
+        <hr style="clear:both;">
+        {% if j != "title" and j != "page-scrapped" and j != "page-word"%}
+            <table style="table-layout: fixed;" class="table-fill">
+            <tr>
+                <th>Index</th>
+                <th>Value</th>
+            </tr>
+                {% for i in result.get(j) %}
+                    <tr>
+                    {% for key, val in i.items() %}
+                        <td>{{ key }}</td>
+                        <td>{{ val }}</td>
+                    {% endfor %}
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+        {% if j == "page-word" %}
+            Page index is mapped to [word, # of occurrence]<br><br>
+            {% for i in result.get(j) %}
+                {% for key, val in i.items() %}
+                    <strong>Page Index:</strong> {{ key }}<br>
+                    {% for keys, vals in val.items() %}
+                        <strong style="margin-left: 60px; ">{{ keys }}</strong>: {{ vals }}<br>
+                    {% endfor %}
+                    <br>
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
+        {% if j == "title" or j == "page-scrapped" %}
+            {% for i in result.get(j) %}
+                {% for key, val in i.items() %}
+                    <div><p align="left"><strong>{{ key }}</strong>  <strong>:</strong>  {{ val }}</p></div>
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+    </div>
+</body>
+</html>

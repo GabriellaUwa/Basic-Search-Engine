@@ -39,12 +39,12 @@ def handle_data():
             for j in results:
                 final_result[j] = results.get(j)
 
-            results = db_handler.query_mongo(projectpath)
+            results = db_handler.query_mongo(projectpath.lower())
             for j in results:
                 if results.get(j) not in final_result.values():
                     final_result[j] = results.get(j)
         else:
-            final_result = db_handler.query_mongo(projectpath)
+            final_result = db_handler.query_mongo(projectpath.lower())
 
         end = time.time()
         if final_result is None:
@@ -64,9 +64,7 @@ def handle_data():
 def get_data():
 
     result = db_handler.mongo_get_all()
-    table = json2html.convert(json=result,
-                              table_attributes="id=\"info-table\" class=\"table table-bordered table-hover\"")
-    return table
+    return render_template("admin_result.html", result=result)
 
 
 @app.route("/admin", methods = ['GET', 'POST'])
