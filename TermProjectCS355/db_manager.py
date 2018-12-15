@@ -47,6 +47,10 @@ class DBManager():
         "https://en.wikipedia.org/wiki/Art",
         "https://en.wikipedia.org/wiki/Music",
         "https://en.wikipedia.org/wiki/Culture",
+        "https://en.wikipedia.org/wiki/United_States",
+        "https://en.wikipedia.org/wiki/Country",
+        "https://en.wikipedia.org/wiki/City_University_of_New_York",
+        "https://en.wikipedia.org/wiki/Restaurant",
     ]
 
     related_links = []
@@ -108,11 +112,12 @@ class DBManager():
         :return: None
         """
         try:
-            for i in self.related_links:
+            for i in random.sample(self.related_links, 50):
                 try:
                     self.setup_collections([i])
                 except error.URLError:
                     log("Invalid URL")
+
         except ValueError as e:
             log(e)
 
@@ -276,4 +281,3 @@ class DBManager():
         :return:
         """
         self.setup_collections(self.URLS)
-
