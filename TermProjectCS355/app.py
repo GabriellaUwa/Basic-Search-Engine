@@ -15,6 +15,7 @@ db_handler = DBManager()
 @app.route('/')
 def search_engine():
     """
+
     :aim: The search engine landing page
     :return: search engine
     """
@@ -22,8 +23,8 @@ def search_engine():
 
 @app.route('/result', methods = ['GET', 'POST'])
 def handle_data():
-
     """
+
     :aim: Shows search result page. Checks redis first before mongodb if there's more
     :return: search result page
     """
@@ -49,6 +50,7 @@ def handle_data():
         end = time.time()
         if final_result is None:
             final_result = "Sorry we could not find what you're searching for"
+            db_handler.redis_set(projectpath, final_result)
             string = "We have 0 result(s) (" + str(round(end - start, 4) % 60) + " seconds)"
         else:
             db_handler.redis_set(projectpath, final_result)
@@ -62,7 +64,11 @@ def handle_data():
 
 @app.route("/admin_result")
 def get_data():
+    """
 
+    :aim: show info in the database
+    :return: result of the database rendered to /admin_result
+    """
     result = db_handler.mongo_get_all()
     return render_template("admin_result.html", result=result)
 
@@ -70,6 +76,7 @@ def get_data():
 @app.route("/admin", methods = ['GET', 'POST'])
 def admin_page():
     """
+
     :aim: Directs to admin page
     :return: Admin page
     """
@@ -79,6 +86,7 @@ def admin_page():
 @app.route("/admin_results", methods = ['GET', 'POST'])
 def add_url():
     """
+
     :aim: add page to be indexed
     :return: admin page
     """
@@ -95,6 +103,7 @@ def add_url():
 @app.route("/history", methods = ['GET', 'POST'])
 def search_history():
     """
+
     :aim: shows history page
     :return: history page
     """

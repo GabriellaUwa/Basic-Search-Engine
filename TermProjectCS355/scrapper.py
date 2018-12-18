@@ -6,6 +6,12 @@ import logging
 _log = logging.debug
 
 def tag_visible(element):
+    """
+
+    :aim: to filter out unwanted tags from scrapped
+    :param element: element from the page
+    :return: bool for the filter
+    """
     if element.parent.name in ['style', 'script', 'head', 'title', 'meta', '[document]']:
         return False
     if isinstance(element, Comment):
@@ -19,16 +25,17 @@ def scrape(url):
     :param url: takes a url as a string
     :return:
     """
-
     page_response = requests.get(url, timeout=5)
     page_content = BeautifulSoup(page_response.content, "html.parser")
     textContent = []
 
-    texts = page_content.findAll(text=True)
+    #scrapes entire page
+    texts = page_content.findAll(text=True) #iterable passed to filter
     visible_texts = filter(tag_visible, texts)
     final_content = " ".join(t.strip() for t in visible_texts)
     all_word_list = re.sub("[^\w]", " ", final_content.strip()).split()
 
+    #scrapes paragraph to be rendered to results page
     temp = page_content.find_all("p")
     for i in range(0, len(temp)):
         paragraphs = page_content.find_all("p")[i].text.strip()

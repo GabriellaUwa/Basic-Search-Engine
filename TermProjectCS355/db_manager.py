@@ -75,12 +75,8 @@ class DBManager():
         for i in urls:
             try:
                 temp = scrape(i)
-
                 pages.append({str(page_index): i})  # maps index: urls
-
                 word_counts = temp.get("word_counts")
-
-
                 page_word.append({str(page_index): word_counts})  # maps page_index: {word: count}
                 page_content.append({str(page_index): temp.get("details")})  # maps {page_index: content}
 
@@ -90,7 +86,6 @@ class DBManager():
                     stripped_title = ""
 
                 title.append({stripped_title: [i, temp.get("details")]})
-
                 page_title.append({str(page_index): temp.get("title")})
                 page_index += 1
 
@@ -112,12 +107,11 @@ class DBManager():
         :return: None
         """
         try:
-            for i in random.sample(self.related_links, 50):
+            for i in random.sample(self.related_links, 100):
                 try:
                     self.setup_collections([i])
                 except error.URLError:
                     log("Invalid URL")
-
         except ValueError as e:
             log(e)
 
@@ -147,7 +141,7 @@ class DBManager():
             for q in s_query:
                 if q in key.decode("utf-8"):
                     new_dict = json.loads(self.redis.get(key).decode("utf-8"))
-                    if new_dict:
+                    if isinstance(new_dict, dict):
                         for k,v in new_dict.items():
                             queries[k] = v
         if queries != {}:
@@ -164,7 +158,6 @@ class DBManager():
         history = []
         for key in keys:
             history.append(key.decode('utf-8'))
-
         return history
 
     def clear_cached(self):
@@ -211,7 +204,6 @@ class DBManager():
         titles = self.by_title.find({}, {'_id': False})
 
 
-        #Search
         for title in titles:
             for j in title:
                 for k in wordList:
@@ -271,7 +263,6 @@ class DBManager():
         self.by_title.delete_many({})
         self.page_title.delete_many({})
         self.clear_cached()
-
         self.populate()
 
 

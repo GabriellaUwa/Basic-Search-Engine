@@ -12,6 +12,7 @@
     <div id="history">
     <a href="{{ url_for('admin_page') }}">Back to Admin</a>
     <br><br><br>
+        <p> You have <strong>{{ history|length }}</strong> queries</p>
     <strong>Here are your previous queries</strong><br>
     {% for val in history%}
         {{ val }}<br>
