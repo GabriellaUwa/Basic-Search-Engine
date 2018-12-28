@@ -12,10 +12,9 @@ log = logging.debug
 
 class DBManager():
 
-    #clean up later
-    url = urlparse.urlparse("redis://h:pf1961dc8a32a43730a9db4190e6c504bb5a96b0b273a3a3d34c19dd3426d0804@ec2-34-225-229-4.compute-1.amazonaws.com:59769")
+    url = urlparse.urlparse("YOUR_REDIS_URI")
     redis = Redis(host=url.hostname, port=url.port, password=url.password)
-    mongo_client = MongoClient("mongodb://heroku_b629lqd4:eaula0va2orvkjrko8pmsptkg4@ds227853.mlab.com:27853/heroku_b629lqd4", document_class=OrderedDict)
+    mongo_client = MongoClient("YOUR_MONGO_URI", document_class=OrderedDict)
 
     #MongoDB Sandbox
     db = mongo_client["heroku_b629lqd4"]
